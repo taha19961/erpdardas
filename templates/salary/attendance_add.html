@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">تسجيل الحضور والغياب</h5>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> العودة للرئيسية
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">اسم الموظف <span class="text-danger">*</span></label>
+                                <select name="employee_id" class="form-select form-select-lg" required>
+                                    <option value="">-- اختر موظف --</option>
+                                    {% for emp in employees %}
+                                    <option value="{{ emp.id }}">{{ emp.full_name }} - {{ emp.position or '-' }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">التاريخ <span class="text-danger">*</span></label>
+                                <input type="date" name="date" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الحالة <span class="text-danger">*</span></label>
+                                <select name="status" class="form-select form-select-lg" required>
+                                    <option value="present">حاضر</option>
+                                    <option value="absent">غائب</option>
+                                    <option value="half_day">نصف يوم</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">ملاحظات</label>
+                                <textarea name="notes" class="form-control" rows="6" placeholder="أدخل أي ملاحظات..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> تسجيل الحضور/الغياب
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="no-print" style="text-align: center; margin-bottom: 20px; padding: 15px; border-bottom: 2px solid #007bff;">
+    {% if settings %}
+        <img src="{{ settings.logo_url }}" alt="شعار الشركة" style="max-height: 80px; margin-bottom: 10px;">
+        <h2 style="margin: 0; color: #333;">{{ settings.company_name }}</h2>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>تفاصيل الوثيقة: {{ document.title }}</h3>
+        <p><strong>الرقم المرجعي:</strong> {{ document.unique_id }}</p>
+        <p><strong>النوع:</strong> {{ document.doc_type or '-' }}</p>
+        <p><strong>الجهة المصدرة:</strong> {{ document.source or '-' }}</p>
+        <p><strong>تاريخ الإصدار:</strong> {{ document.issue_date.strftime('%Y-%m-%d') if document.issue_date else '-' }}</p>
+        <p><strong>تاريخ الاستلام:</strong> {{ document.receive_date.strftime('%Y-%m-%d') }}</p>
+        <p><strong>المجلد:</strong> <span class="badge bg-info">{{ document.folder or 'عام' }}</span></p>
+        <p><strong>الحالة:</strong> <span class="badge bg-{{ 'warning' if document.status == 'pending' else 'success' if document.status == 'archived' else 'danger' }}">{{ document.status }}</span></p>
+        {% if document.expiry_date %}
+        <p><strong>تاريخ الانتهاء:</strong> {{ document.expiry_date.strftime('%Y-%m-%d') }}</p>
+        {% endif %}
+        {% if document.notes %}
+            <p><strong>ملاحظات:</strong> {{ document.notes }}</p>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <h5>الملفات المرفقة ({{ document.files|length }})</h5>
+        {% if document.files %}
+            <div class="list-group">
+                {% for file in document.files %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if file.file_type == 'image' %}
+                                <img src="{{ url_for('uploaded_file', filename='documents/' + (document.folder + '/' if document.folder != 'عام' else '') + file.filename) }}" 
+                                     alt="ملف الوثيقة" 
+                                     class="img-thumbnail" 
+                                     style="max-height: 80px; cursor: pointer;"
+                                     data-bs-toggle="modal" 
+                                     data-bs-target="#imageModal{{ file.id }}">
+                            {% else %}
+                                <i class="bi bi-file-pdf text-danger"></i> {{ file.filename }}
+                            {% endif %}
+                        </div>
+                        <a href="{{ url_for('uploaded_file', filename='documents/' + (document.folder + '/' if document.folder != 'عام' else '') + file.filename) }}" 
+                           class="btn btn-sm btn-outline-secondary" 
+                           target="_blank">عرض</a>
+                    </div>
+
+                    {% if file.file_type == 'image' %}
+                    <div class="modal fade" id="imageModal{{ file.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">معاينة الصورة</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="{{ url_for('uploaded_file', filename='documents/' + (document.folder + '/' if document.folder != 'عام' else '') + file.filename) }}" class="img-fluid">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">لا توجد ملفات مرفقة لهذه الوثيقة.</div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-4">
+    <button onclick="window.print()" class="btn btn-outline-secondary">
+        <i class="bi bi-printer"></i> طباعة
+    </button>
+    <a href="{{ url_for('document_pdf', document_id=document.id) }}" class="btn btn-outline-primary">
+        <i class="bi bi-file-pdf"></i> تصدير PDF
+    </a>
+    {% if current_user.can_edit() %}
+    <a href="{{ url_for('edit_document', document_id=document.id) }}" class="btn btn-warning">تعديل</a>
+    <form method="POST" action="{{ url_for('delete_document', document_id=document.id) }}" style="display: inline;" onsubmit="return confirm('هل أنت متأكد من حذف هذه الوثيقة؟')">
+        <button type="submit" class="btn btn-danger">حذف</button>
+    </form>
+    {% endif %}
+    <a href="{{ url_for('document_list') }}" class="btn btn-secondary">العودة للقائمة</a>
+    <a href="{{ url_for('add_document') }}" class="btn btn-primary">إضافة وثيقة جديدة</a>
+</div>
+{% endblock %}

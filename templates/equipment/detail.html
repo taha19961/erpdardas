@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">تفاصيل المعدة: {{ equipment.equipment_type }} - {{ equipment.brand }} {{ equipment.model }}</h5>
+                <div class="d-flex gap-2">
+                    {% if current_user.can_edit() %}
+                    <a href="{{ url_for('edit_equipment', equipment_id=equipment.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit me-1"></i> تعديل
+                    </a>
+                    <form method="POST" action="{{ url_for('delete_equipment', equipment_id=equipment.id) }}" class="d-inline" onsubmit="return confirm('هل أنت متأكد من حذف هذه المعدة؟')">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i> حذف
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">رقم الشاسيه</h6>
+                                        <p class="mb-0 fw-bold">{{ equipment.chassis_number }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">رقم المحرك</h6>
+                                        <p class="mb-0 fw-bold">{{ equipment.engine_number or '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">السعة</h6>
+                                        <p class="mb-0 fw-bold">{{ equipment.capacity or '-' }} م³</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">الحمولة القصوى</h6>
+                                        <p class="mb-0 fw-bold">{{ equipment.max_load or '-' }} طن</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">عداد الكيلومترات</h6>
+                                        <p class="mb-0 fw-bold">{{ equipment.current_km }} كم</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">الحالة</h6>
+                                        <p class="mb-0">
+                                            <span class="badge bg-{{ 'success' if equipment.status == 'active' else 'warning' if equipment.status == 'maintenance' else 'danger' }} rounded-pill px-3 py-2">
+                                                {% if equipment.status == 'active' %}نشط
+                                                {% elif equipment.status == 'maintenance' %}صيانة
+                                                {% elif equipment.status == 'out_of_service' %}خارج الخدمة
+                                                {% endif %}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">تاريخ الشراء</h6>
+                                        <p class="mb-0 fw-bold">{{ equipment.purchase_date.strftime('%Y-%m-%d') if equipment.purchase_date else '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if equipment.notes %}
+                            <div class="col-12">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">ملاحظات</h6>
+                                        <p class="mb-0 fw-bold">{{ equipment.notes }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('add_fuel_record', equipment_id=equipment.id) }}" class="btn btn-success btn-lg">
+                                <i class="fas fa-gas-pump me-2"></i> إضافة وقود
+                            </a>
+                            <a href="{{ url_for('add_equipment_maintenance', equipment_id=equipment.id) }}" class="btn btn-info btn-lg">
+                                <i class="fas fa-wrench me-2"></i> إضافة صيانة
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- سجلات الوقود -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">سجلات الوقود ({{ equipment.fuel_records|length }})</h5>
+                {% if current_user.can_edit() %}
+                <a href="{{ url_for('add_fuel_record', equipment_id=equipment.id) }}" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i> إضافة وقود
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if equipment.fuel_records %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>الكمية</th>
+                                <th>السعر/لتر</th>
+                                <th>الإجمالي</th>
+                                <th>عداد الكيلومترات</th>
+                                <th>النوع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in equipment.fuel_records|sort(attribute='date', reverse=true) %}
+                            <tr>
+                                <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ record.quantity }} لتر</td>
+                                <td>{{ record.price_per_liter }} ريال</td>
+                                <td>{{ record.total_cost }} ريال</td>
+                                <td>{{ record.current_km }} كم</td>
+                                <td>{{ record.fuel_type or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-gas-pump fa-3x text-muted opacity-50 mb-3"></i>
+                    <h5>لا توجد سجلات وقود لهذه المعدة</h5>
+                    {% if current_user.can_edit() %}
+                    <p class="mb-0">ابدأ بإضافة أول سجل وقود</p>
+                    <a href="{{ url_for('add_fuel_record', equipment_id=equipment.id) }}" class="btn btn-success mt-3">
+                        <i class="fas fa-plus me-1"></i> إضافة وقود
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- سجلات الصيانة -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">سجلات الصيانة ({{ equipment.maintenance_records|length }})</h5>
+                {% if current_user.can_edit() %}
+                <a href="{{ url_for('add_equipment_maintenance', equipment_id=equipment.id) }}" class="btn btn-info">
+                    <i class="fas fa-plus me-1"></i> إضافة صيانة
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if equipment.maintenance_records %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>النوع</th>
+                                <th>الوصف</th>
+                                <th>التاريخ</th>
+                                <th>الكلفة</th>
+                                <th>عداد الكيلومترات</th>
+                                <th>تم بواسطة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in equipment.maintenance_records|sort(attribute='date', reverse=true) %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                                        {{ record.maintenance_type }}
+                                    </span>
+                                </td>
+                                <td>{{ record.description or '-' }}</td>
+                                <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if record.cost %}
+                                    {{ "{:,.2f}".format(record.cost) }} ريال
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+                                <td>{{ record.current_km }} كم</td>
+                                <td>{{ record.performed_by or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-wrench fa-3x text-muted opacity-50 mb-3"></i>
+                    <h5>لا توجد سجلات صيانة لهذه المعدة</h5>
+                    {% if current_user.can_edit() %}
+                    <p class="mb-0">ابدأ بإضافة أول سجل صيانة</p>
+                    <a href="{{ url_for('add_equipment_maintenance', equipment_id=equipment.id) }}" class="btn btn-info mt-3">
+                        <i class="fas fa-plus me-1"></i> إضافة صيانة
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

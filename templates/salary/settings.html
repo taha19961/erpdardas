@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">إعدادات الرواتب</h5>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> العودة للرئيسية
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">قيمة اليوم (ريال)</label>
+                                <input type="number" name="daily_rate" class="form-control form-control-lg" step="0.01" value="{{ salary_settings.daily_rate }}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">قيمة الساعة (ريال)</label>
+                                <input type="number" name="hourly_rate" class="form-control form-control-lg" step="0.01" value="{{ salary_settings.hourly_rate }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">قيمة اليوم الإضافي (ريال)</label>
+                                <input type="number" name="overtime_daily_rate" class="form-control form-control-lg" step="0.01" value="{{ salary_settings.overtime_daily_rate }}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">قيمة الساعة الإضافية (ريال)</label>
+                                <input type="number" name="overtime_hourly_rate" class="form-control form-control-lg" step="0.01" value="{{ salary_settings.overtime_hourly_rate }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> حفظ الإعدادات
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

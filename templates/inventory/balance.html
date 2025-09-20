@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>رصيد المخزون</h4>
+                <div>
+                    <a href="{{ url_for('add_stock_transaction') }}" class="btn btn-primary btn-sm me-2">
+                        <i class="fas fa-plus"></i> إضافة/صرف
+                    </a>
+                    <a href="{{ url_for('export_stock_balance') }}" class="btn btn-success btn-sm">
+                        <i class="fas fa-file-excel"></i> تصدير Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- تنبيهات نقص المخزون -->
+    {% if low_stock_items %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>تنبيه:</strong> المواد التالية تحت الحد الأدنى المطلوب:
+                <ul class="mb-0 mt-2">
+                    {% for item in low_stock_items %}
+                    <li>
+                        {{ item.material.name }} في {{ item.warehouse.name }}
+                        ({{ item.quantity }} {{ item.material.unit }} / الحد الأدنى: {{ item.material.min_stock_level }})
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- جدول رصيد المخزون -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    {% if balances %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>المستودع</th>
+                                    <th>المادة</th>
+                                    <th>الوحدة</th>
+                                    <th>الكمية</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in balances %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ item.warehouse.name }}</td>
+                                    <td>{{ item.material.name }}</td>
+                                    <td>{{ item.material.unit }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>
+                                        {% if item.quantity <= item.material.min_stock_level %}
+                                        <span class="badge bg-danger">تحت الحد الأدنى</span>
+                                        {% elif item.quantity <= item.material.min_stock_level * 2 %}
+                                        <span class="badge bg-warning text-dark">منخفض</span>
+                                        {% else %}
+                                        <span class="badge bg-success">جيد</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('material_history', material_id=item.material.id) }}" class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-history"></i> السجل
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">لا توجد أرصدة في المخازن</h5>
+                        <a href="{{ url_for('add_stock_transaction') }}" class="btn btn-primary mt-3">
+                            <i class="fas fa-plus"></i> إضافة أول كمية
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

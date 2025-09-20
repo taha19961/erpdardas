@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="text-center">تسجيل الدخول</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label>اسم المستخدم</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>كلمة المرور</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">تذكرني</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">تسجيل الدخول</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">إضافة معدة جديدة</h5>
+                <a href="{{ url_for('equipment_list') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> العودة للقائمة
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">نوع المعدة <span class="text-danger">*</span></label>
+                                <select name="equipment_type" class="form-select form-select-lg" required>
+                                    <option value="">-- اختر نوع المعدة --</option>
+                                    <option value="قلاب">قلاب</option>
+                                    <option value="خلاطة">خلاطة</option>
+                                    <option value="لودر">لودر</option>
+                                    <option value="بلدوزر">بلدوزر</option>
+                                    <option value="ريشة">ريشة</option>
+                                    <option value="مضخة خرسانة">مضخة خرسانة</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الماركة <span class="text-danger">*</span></label>
+                                <input type="text" name="brand" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الموديل <span class="text-danger">*</span></label>
+                                <input type="text" name="model" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">رقم الشاسيه <span class="text-danger">*</span></label>
+                                <input type="text" name="chassis_number" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">رقم المحرك</label>
+                                <input type="text" name="engine_number" class="form-control form-control-lg">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">السعة (م³)</label>
+                                <input type="number" name="capacity" class="form-control form-control-lg" step="0.1">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الحمولة القصوى (طن)</label>
+                                <input type="number" name="max_load" class="form-control form-control-lg" step="0.1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">عداد الكيلومترات الحالي</label>
+                                <input type="number" name="current_km" class="form-control form-control-lg" value="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الكيلومترات القادمة للصيانة</label>
+                                <input type="number" name="next_maintenance_km" class="form-control form-control-lg">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">تاريخ الشراء</label>
+                                <input type="date" name="purchase_date" class="form-control form-control-lg">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الحالة</label>
+                                <select name="status" class="form-select form-select-lg">
+                                    <option value="active">نشط</option>
+                                    <option value="maintenance">تحت الصيانة</option>
+                                    <option value="out_of_service">خارج الخدمة</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">ملاحظات</label>
+                                <textarea name="notes" class="form-control" rows="3" placeholder="أدخل أي ملاحظات إضافية..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> حفظ المعدة
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

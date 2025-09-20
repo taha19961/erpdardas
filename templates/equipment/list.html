@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">قائمة المعدات</h5>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('add_equipment') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> إضافة معدة
+                    </a>
+                    <a href="{{ url_for('maintenance_alerts') }}" class="btn btn-warning">
+                        <i class="fas fa-bell me-1"></i> تنبيهات الصيانة
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="mb-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control border-start-0" placeholder="ابحث بالنوع، الماركة، الموديل، رقم الشاسيه..." value="{{ search_query or '' }}">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fas fa-search"></i> بحث
+                        </button>
+                        {% if search_query %}
+                        <a href="{{ url_for('equipment_list') }}" class="btn btn-outline-secondary">إلغاء البحث</a>
+                        {% endif %}
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>الرقم المرجعي</th>
+                                <th>النوع والماركة</th>
+                                <th>رقم الشاسيه</th>
+                                <th>العداد</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for eq in equipment %}
+                            <tr>
+                                <td class="fw-bold">{{ eq.unique_id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            <i class="fas fa-truck text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">{{ eq.equipment_type }} - {{ eq.brand }} {{ eq.model }}</div>
+                                            <div class="text-muted small">
+                                                {% if eq.capacity %}{{ eq.capacity }} م³ | {% endif %}
+                                                {% if eq.max_load %}{{ eq.max_load }} طن{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ eq.chassis_number }}</td>
+                                <td>
+                                    <div class="fw-bold">{{ eq.current_km }} كم</div>
+                                    {% if eq.next_maintenance_km %}
+                                    <div class="text-muted small">القادمة: {{ eq.next_maintenance_km }} كم</div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if eq.status == 'active' else 'warning' if eq.status == 'maintenance' else 'danger' }} rounded-pill px-3 py-2">
+                                        {% if eq.status == 'active' %}نشط
+                                        {% elif eq.status == 'maintenance' %}صيانة
+                                        {% elif eq.status == 'out_of_service' %}خارج الخدمة
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('equipment_detail', equipment_id=eq.id) }}" class="btn btn-sm btn-outline-primary" title="عرض التفاصيل">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if current_user.can_edit() %}
+                                        <a href="{{ url_for('edit_equipment', equipment_id=eq.id) }}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('delete_equipment', equipment_id=eq.id) }}" class="d-inline" onsubmit="return confirm('هل أنت متأكد من حذف هذه المعدة؟')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-truck fa-3x mb-3 opacity-50"></i>
+                                        <h5>لا توجد معدات مسجلة بعد</h5>
+                                        <p class="mb-0">ابدأ بإضافة أول معدة إلى النظام</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>قائمة الوثائق</h3>
+    <div>
+        <a href="{{ url_for('add_document') }}" class="btn btn-success">إضافة وثيقة</a>
+        <a href="{{ url_for('export_documents') }}" class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-excel"></i> تصدير Excel
+        </a>
+    </div>
+</div>
+
+<form method="GET" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="ابحث بالعنوان، النوع، المجلد، أو الرقم المرجعي..." value="{{ search_query or '' }}">
+        <button class="btn btn-outline-secondary" type="submit">
+            <i class="bi bi-search"></i> بحث
+        </button>
+        {% if search_query %}
+        <a href="{{ url_for('document_list') }}" class="btn btn-outline-secondary">إلغاء البحث</a>
+        {% endif %}
+    </div>
+</form>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>الرقم المرجعي</th>
+            <th>العنوان</th>
+            <th>النوع</th>
+            <th>المجلد</th>
+            <th>الحالة</th>
+            <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doc in documents %}
+        <tr>
+            <td>{{ doc.unique_id }}</td>
+            <td>{{ doc.title }}</td>
+            <td>{{ doc.doc_type or '-' }}</td>
+            <td><span class="badge bg-info">{{ doc.folder or 'عام' }}</span></td>
+            <td><span class="badge bg-{{ 'warning' if doc.status == 'pending' else 'success' if doc.status == 'archived' else 'danger' }}">{{ doc.status }}</span></td>
+            <td>
+                <a href="{{ url_for('document_detail', document_id=doc.id) }}" class="btn btn-sm btn-info">عرض</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" class="text-center">لا توجد وثائق مسجلة بعد.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

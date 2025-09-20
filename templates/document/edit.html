@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>تعديل الوثيقة: {{ document.title }}</h3>
+    <a href="{{ url_for('document_detail', document_id=document.id) }}" class="btn btn-secondary">العودة للتفاصيل</a>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label>العنوان <span class="text-danger">*</span></label>
+                <input type="text" name="title" class="form-control" value="{{ document.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label>النوع</label>
+                <input type="text" name="doc_type" class="form-control" value="{{ document.doc_type }}">
+            </div>
+            <div class="mb-3">
+                <label>الجهة المصدرة</label>
+                <input type="text" name="source" class="form-control" value="{{ document.source }}">
+            </div>
+            <div class="mb-3">
+                <label>تاريخ الإصدار</label>
+                <input type="date" name="issue_date" class="form-control" value="{{ document.issue_date.strftime('%Y-%m-%d') if document.issue_date else '' }}">
+            </div>
+            <div class="mb-3">
+                <label>تاريخ الاستلام</label>
+                <input type="date" name="receive_date" class="form-control" value="{{ document.receive_date.strftime('%Y-%m-%d') if document.receive_date else '' }}">
+            </div>
+            <div class="mb-3">
+                <label>تاريخ الانتهاء</label>
+                <input type="date" name="expiry_date" class="form-control" value="{{ document.expiry_date.strftime('%Y-%m-%d') if document.expiry_date else '' }}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label>المجلد</label>
+                <select name="folder" class="form-select">
+                    {% for folder in folders %}
+                    <option value="{{ folder }}" {% if folder == document.folder %}selected{% endif %}>{{ folder }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>أو أنشئ مجلداً جديداً</label>
+                <input type="text" name="new_folder" class="form-control" placeholder="اسم المجلد الجديد">
+            </div>
+            <div class="mb-3">
+                <label>الحالة</label>
+                <select name="status" class="form-select">
+                    <option value="pending" {% if document.status == 'pending' %}selected{% endif %}>قيد المراجعة</option>
+                    <option value="archived" {% if document.status == 'archived' %}selected{% endif %}>محفوظة</option>
+                    <option value="expired" {% if document.status == 'expired' %}selected{% endif %}>منتهية</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>ملاحظات</label>
+                <textarea name="notes" class="form-control" rows="3">{{ document.notes }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label>إرفاق ملفات جديدة (صور أو PDF)</label>
+                <input type="file" name="files" multiple class="form-control">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+</form>
+{% endblock %}

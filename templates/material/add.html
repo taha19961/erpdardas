@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">إضافة مادة جديدة</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">اسم المادة <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">الوحدة <span class="text-danger">*</span></label>
+                                <select name="unit" class="form-select" required>
+                                    <option value="">اختر الوحدة</option>
+                                    <option value="طن">طن</option>
+                                    <option value="متر مكعب">متر مكعب</option>
+                                    <option value="لتر">لتر</option>
+                                    <option value="قطعة">قطعة</option>
+                                    <option value="كيس">كيس</option>
+                                    <option value="متر">متر</option>
+                                    <option value="كيلو">كيلو</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">الحد الأدنى للتنبيه</label>
+                                <input type="number" name="min_stock_level" class="form-control" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">التصنيف</label>
+                                <input type="text" name="category" class="form-control" placeholder="مواد خام، قطع غيار...">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">ملاحظات</label>
+                                <textarea name="notes" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save"></i> حفظ
+                                </button>
+                                <a href="{{ url_for('material_list') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times"></i> إلغاء
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

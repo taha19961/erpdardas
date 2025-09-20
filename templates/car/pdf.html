@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل السيارة</title>
+    <style>
+        body { font-family: 'Tajawal', 'Arial', sans-serif; padding: 20px; }
+        h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .section { margin: 20px 0; }
+        .label { font-weight: bold; color: #555; }
+        .value { margin-right: 10px; }
+        .files img { max-width: 150px; margin: 5px; border: 1px solid #ddd; }
+        .files { margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    {% if settings %}
+    <div style="text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #007bff;">
+        <img src="{{ settings.logo_url }}" alt="شعار الشركة" style="max-height: 80px; margin-bottom: 10px;">
+        <h2 style="margin: 0; color: #333;">{{ settings.company_name }}</h2>
+    </div>
+    {% endif %}
+    
+    <h2>تفاصيل السيارة: {{ car.brand }} {{ car.model }}</h2>
+    
+    <div class="section">
+        <p><span class="label">الرقم المرجعي:</span> <span class="value">{{ car.unique_id }}</span></p>
+        <p><span class="label">رقم الشاسيه:</span> <span class="value">{{ car.chassis_number }}</span></p>
+        <p><span class="label">الماركة:</span> <span class="value">{{ car.brand }}</span></p>
+        <p><span class="label">الموديل:</span> <span class="value">{{ car.model }}</span></p>
+        <p><span class="label">النوع:</span> <span class="value">{{ car.car_type or '-' }}</span></p>
+        <p><span class="label">اللون:</span> <span class="value">{{ car.color or '-' }}</span></p>
+        <p><span class="label">السنة:</span> <span class="value">{{ car.year or '-' }}</span></p>
+        <p><span class="label">رقم اللوحة:</span> <span class="value">{{ car.plate_number or '-' }}</span></p>
+        <p><span class="label">الحالة:</span> <span class="value">{{ car.status }}</span></p>
+        <p><span class="label">تاريخ الإدخال:</span> <span class="value">{{ car.created_at.strftime('%Y-%m-%d') }}</span></p>
+        {% if car.notes %}
+        <p><span class="label">ملاحظات:</span> <span class="value">{{ car.notes }}</span></p>
+        {% endif %}
+    </div>
+
+    {% if car.files %}
+    <div class="section">
+        <h3>الملفات المرفقة</h3>
+        <div class="files">
+            {% for file in car.files %}
+                {% if file.file_type == 'image' %}
+                    <img src="{{ url_for('uploaded_file', filename='cars/' + file.filename, _external=True) }}" alt="صورة">
+                {% else %}
+                    <p><i class="bi bi-file-pdf"></i> {{ file.filename }} — <a href="{{ url_for('uploaded_file', filename='cars/' + file.filename, _external=True) }}">تنزيل</a></p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

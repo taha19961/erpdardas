@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>سجل النشاط</h3>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>التاريخ والوقت</th>
+            <th>المستخدم</th>
+            <th>الإجراء</th>
+            <th>الكيان</th>
+            <th>التفاصيل</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ log.username }}</td>
+            <td>
+                {% if log.action == 'create' %}<span class="badge bg-success">إنشاء</span>{% endif %}
+                {% if log.action == 'update' %}<span class="badge bg-warning">تعديل</span>{% endif %}
+                {% if log.action == 'delete' %}<span class="badge bg-danger">حذف</span>{% endif %}
+                {% if log.action == 'login' %}<span class="badge bg-info">دخول</span>{% endif %}
+                {% if log.action == 'logout' %}<span class="badge bg-secondary">خروج</span>{% endif %}
+            </td>
+            <td>{{ log.entity_type }}</td>
+            <td>{{ log.details }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" class="text-center">لا توجد سجلات نشاط بعد.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

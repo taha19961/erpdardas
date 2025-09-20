@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- العنوان والشعار -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            {% if settings %}
+                <img src="{{ settings.logo_url }}" alt="شعار الشركة" class="img-fluid mb-3" style="max-height: 120px;">
+                <h1 class="display-5 fw-bold text-primary mb-2">{{ settings.company_name }}</h1>
+            {% else %}
+                <h1 class="display-5 fw-bold text-primary mb-2">نظام إدارة المقالع والخرسانة الجاهزة</h1>
+            {% endif %}
+            <p class="lead text-muted">لوحة التحكم الرئيسية - متابعة الأداء والعمليات</p>
+        </div>
+    </div>
+
+    <!-- مؤشرات الأداء الرئيسية (KPIs) -->
+    <div class="row g-4 mb-5">
+        <!-- عدد المعدات النشطة -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary text-white mx-auto mb-3" style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-truck fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold text-primary">{{ active_equipment_count }}</h3>
+                    <h6 class="text-muted mb-0">معدات نشطة</h6>
+                    <p class="text-muted small mb-0">من إجمالي {{ total_equipment_count }} معدة</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- إنتاج اليوم -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success text-white mx-auto mb-3" style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-industry fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold text-success">{{ today_production }} م³</h3>
+                    <h6 class="text-muted mb-0">إنتاج اليوم</h6>
+                    <p class="text-muted small mb-0">حتى الساعة {{ current_time.strftime('%H:%M') }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- معدات تحتاج صيانة -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-warning text-white mx-auto mb-3" style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-wrench fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold text-warning">{{ maintenance_alerts_count }}</h3>
+                    <h6 class="text-muted mb-0">معدات تحتاج صيانة</h6>
+                    <p class="text-muted small mb-0">تحتاج اهتمام فوري</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- مبيعات اليوم -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-info text-white mx-auto mb-3" style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold text-info">{{ today_sales }} ريال</h3>
+                    <h6 class="text-muted mb-0">مبيعات اليوم</h6>
+                    <p class="text-muted small mb-0">إيرادات حتى الآن</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- قسم الرواتب السريع -->
+    {% if current_user.can_edit() %}
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">الرواتب - التسجيل الأسبوعي</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('bulk_attendance') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-primary text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-calendar-check fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">تسجيل الحضور الجماعي</h5>
+                                    <p class="card-text text-muted">سجل حضور/غياب جميع الموظفين</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('bulk_overtime') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-success text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-clock fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">تسجيل الإضافي الجماعي</h5>
+                                    <p class="card-text text-muted">سجل الساعات والأيام الإضافية</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('bulk_advance') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-warning text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">تسجيل السلف الجماعية</h5>
+                                    <p class="card-text text-muted">سجل سلف جميع الموظفين</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('calculate_payroll') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-info text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-calculator fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">حساب الرواتب</h5>
+                                    <p class="card-text text-muted">احسب رواتب الأسبوع الحالي</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- الروابط السريعة -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">الروابط السريعة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('equipment_list') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-primary text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-truck fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">إدارة المعدات</h5>
+                                    <p class="card-text text-muted">تتبع وصيانة المعدات</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('employee_list') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-success text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-users fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">إدارة الموظفين</h5>
+                                    <p class="card-text text-muted">بيانات الموظفين والمستندات</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('document_list') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-info text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-file-alt fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">إدارة الوثائق</h5>
+                                    <p class="card-text text-muted">أرشفة الوثائق والمجلدات</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <a href="{{ url_for('car_list') }}" class="card border-0 shadow-sm h-100 text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    <div class="icon-circle bg-warning text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-car fa-2x"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">إدارة السيارات</h5>
+                                    <p class="card-text text-muted">تتبع السيارات وصيانتها</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}

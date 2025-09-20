@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">قائمة المواد</h5>
+                    {% if current_user.is_admin() %}
+                    <a href="{{ url_for('add_material') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> إضافة مادة جديدة
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if materials %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>اسم المادة</th>
+                                    <th>الوحدة</th>
+                                    <th>الحد الأدنى</th>
+                                    <th>التصنيف</th>
+                                    <th>ملاحظات</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mat in materials %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ mat.name }}</td>
+                                    <td>{{ mat.unit }}</td>
+                                    <td>{{ mat.min_stock_level }}</td>
+                                    <td>{{ mat.category or '-' }}</td>
+                                    <td>{{ mat.notes or '-' }}</td>
+                                    <td>
+                                        <a href="{{ url_for('edit_material', material_id=mat.id) }}" class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fas fa-edit"></i> تعديل
+                                        </a>
+                                        {% if current_user.is_admin() %}
+                                        <form method="POST" action="{{ url_for('delete_material', material_id=mat.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('هل أنت متأكد من حذف هذه المادة؟')">
+                                                <i class="fas fa-trash"></i> حذف
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-boxes fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">لا توجد مواد مسجلة</h5>
+                        {% if current_user.is_admin() %}
+                        <a href="{{ url_for('add_material') }}" class="btn btn-primary mt-3">
+                            <i class="fas fa-plus"></i> إضافة مادة جديدة
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

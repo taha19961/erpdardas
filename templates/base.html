@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>نظام الأرشيف</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts - Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #0dcaf0;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 56px;
+            margin: 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        /* Sidebar Styles */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 250px;
+            background: linear-gradient(180deg, #0d6efd 0%, #0b5ed7 100%);
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease, width 0.3s ease; /* Add width transition */
+        }
+
+        #sidebar .sidebar-brand {
+            font-weight: 700;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        #sidebar .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        #sidebar .nav-link.active {
+            color: #fff;
+            background-color: rgba(255,255,255,0.2);
+            font-weight: 500;
+        }
+
+        #sidebar .nav-divider {
+            margin: 1rem 0;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Collapsed Sidebar Styles */
+        #sidebar.collapsed {
+            width: 60px; /* Adjust as needed */
+        }
+
+        #sidebar.collapsed .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 0.5rem;
+        }
+
+        #sidebar.collapsed .sidebar-brand i {
+            margin: 0;
+        }
+
+        #sidebar.collapsed .sidebar-brand span {
+            display: none;
+        }
+
+        #sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        #sidebar.collapsed .nav-link {
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+        }
+
+        #sidebar.collapsed .nav-divider {
+            display: none;
+        }
+
+        /* Main Content */
+        #main-content {
+            margin-right: 250px;
+            padding: 20px;
+            min-height: 100vh;
+            transition: margin-right 0.3s ease;
+        }
+
+        #main-content.collapsed {
+            margin-right: 60px; /* Adjust as needed */
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            right: 250px;
+            left: 0;
+            z-index: 1030;
+            transition: right 0.3s ease;
+        }
+
+        .top-navbar.collapsed {
+            right: 60px; /* Adjust as needed */
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid var(--primary-color);
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            #sidebar {
+                transform: translateX(100%);
+            }
+
+            #sidebar.show {
+                transform: translateX(0);
+            }
+
+            #main-content {
+                margin-right: 0;
+            }
+
+            .top-navbar {
+                right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-navbar {
+                padding-right: 15px;
+                padding-left: 15px;
+            }
+
+            #main-content {
+                padding: 15px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            #sidebar, .top-navbar, .no-print {
+                display: none !important;
+            }
+
+            #main-content {
+                margin-right: 0 !important;
+                padding: 20px !important;
+            }
+
+            body {
+                padding-top: 0 !important;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar" class="d-none d-lg-block">
+        <div class="sidebar-brand">
+            <i class="fas fa-archive me-2"></i> <span>نظام الأرشيف</span>
+        </div>
+        <hr class="text-white-50">
+
+        <ul class="nav flex-column px-3">
+            <!-- الصفحة الرئيسية -->
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                    <i class="fas fa-home me-2"></i> <span>الرئيسية</span>
+                </a>
+            </li>
+
+            <hr class="text-white-50 my-2">
+
+            <!-- الوحدات الأساسية -->
+            <li class="nav-item">
+                <span class="nav-link text-white-50 small">الوحدات الأساسية</span>
+            </li>
+
+            <!-- Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="basicUnitsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-layer-group me-2"></i> <span>الوحدات</span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="basicUnitsDropdown">
+                    <li>
+                        <a class="dropdown-item {% if 'car' in request.endpoint %}active{% endif %}" href="{{ url_for('car_list') }}">
+                            <i class="fas fa-car me-2"></i> السيارات
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if 'employee' in request.endpoint %}active{% endif %}" href="{{ url_for('employee_list') }}">
+                            <i class="fas fa-users me-2"></i> الموظفين
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if 'document' in request.endpoint %}active{% endif %}" href="{{ url_for('document_list') }}">
+                            <i class="fas fa-file-alt me-2"></i> الوثائق
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if 'equipment' in request.endpoint %}active{% endif %}" href="{{ url_for('equipment_list') }}">
+                            <i class="fas fa-truck me-2"></i> المعدات
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <hr class="text-white-50 my-2">
+
+            <!-- قسم الرواتب -->
+            {% if current_user.is_authenticated and current_user.can_edit() %}
+            <li class="nav-item">
+                <span class="nav-link text-white-50 small">إدارة الرواتب</span>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'salary_settings' in request.endpoint %}active{% endif %}" href="{{ url_for('salary_settings') }}">
+                    <i class="fas fa-cog me-2"></i> <span>إعدادات الرواتب</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'salary_employees_list' in request.endpoint %}active{% endif %}" href="{{ url_for('salary_employees_list') }}">
+                    <i class="fas fa-user-cog me-2"></i> <span>رواتب الموظفين</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'bulk_attendance' in request.endpoint %}active{% endif %}" href="{{ url_for('bulk_attendance') }}">
+                    <i class="fas fa-calendar-check me-2"></i> <span>الحضور الجماعي</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'bulk_overtime' in request.endpoint %}active{% endif %}" href="{{ url_for('bulk_overtime') }}">
+                    <i class="fas fa-clock me-2"></i> <span>الإضافي الجماعي</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'bulk_advance' in request.endpoint %}active{% endif %}" href="{{ url_for('bulk_advance') }}">
+                    <i class="fas fa-money-bill-wave me-2"></i> <span>السلف الجماعية</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'calculate_payroll' in request.endpoint %}active{% endif %}" href="{{ url_for('calculate_payroll') }}">
+                    <i class="fas fa-calculator me-2"></i> <span>حساب الرواتب</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'payroll_list' in request.endpoint %}active{% endif %}" href="{{ url_for('payroll_list') }}">
+                    <i class="fas fa-file-invoice-dollar me-2"></i> <span>سجل الرواتب</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <hr class="text-white-50 my-2">
+
+            <!-- قسم المخازن -->
+            {% if current_user.is_authenticated and current_user.can_edit() %}
+            <li class="nav-item">
+                <span class="nav-link text-white-50 small">إدارة المخازن</span>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'warehouse' in request.endpoint %}active{% endif %}" href="{{ url_for('warehouse_list') }}">
+                    <i class="fas fa-warehouse me-2"></i> <span>إدارة المستودعات</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'material' in request.endpoint %}active{% endif %}" href="{{ url_for('material_list') }}">
+                    <i class="fas fa-boxes me-2"></i> <span>إدارة المواد</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'transaction' in request.endpoint %}active{% endif %}" href="{{ url_for('add_stock_transaction') }}">
+                    <i class="fas fa-exchange-alt me-2"></i> <span>حركة المخزون</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'balance' in request.endpoint %}active{% endif %}" href="{{ url_for('stock_balance') }}">
+                    <i class="fas fa-balance-scale me-2"></i> <span>رصيد المخزون</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <hr class="text-white-50 my-2">
+
+            <!-- الإدارة -->
+            {% if current_user.is_authenticated and current_user.can_edit() %}
+            <li class="nav-item">
+                <span class="nav-link text-white-50 small">الإدارة</span>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'notifications' %}active{% endif %}" href="{{ url_for('notifications') }}">
+                    <i class="fas fa-bell me-2"></i> <span>الإشعارات</span>
+                    {% set notif_count = expiring_docs|length + expired_docs|length if expiring_docs else 0 %}
+                    {% if notif_count > 0 %}
+                    <span class="badge bg-danger ms-2">{{ notif_count }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% endif %}
+
+            {% if current_user.is_authenticated and current_user.is_admin() %}
+            <li class="nav-item">
+                <a class="nav-link {% if 'user' in request.endpoint %}active{% endif %}" href="{{ url_for('user_list') }}">
+                    <i class="fas fa-user-plus me-2"></i> <span>المستخدمين</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if 'backup' in request.endpoint %}active{% endif %}" href="{{ url_for('backup_list') }}">
+                    <i class="fas fa-database me-2"></i> <span>النسخ الاحتياطية</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'audit_log' %}active{% endif %}" href="{{ url_for('audit_log') }}">
+                    <i class="fas fa-history me-2"></i> <span>سجل النشاط</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'company_settings' %}active{% endif %}" href="{{ url_for('company_settings') }}">
+                    <i class="fas fa-cog me-2"></i> <span>إعدادات الشركة</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+
+        <!-- Sidebar Toggle Button -->
+        <div class="text-center p-3">
+            <button id="sidebarToggle" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-arrows-alt-h"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Sidebar Toggle Button -->
+    <button class="btn btn-primary d-lg-none position-fixed top-0 end-0 m-3 z-index-1030" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm top-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand d-lg-none" href="{{ url_for('index') }}">
+                <i class="fas fa-archive me-2"></i> نظام الأرشيف
+            </a>
+
+            <div class="navbar-nav ms-auto">
+                {% if current_user.is_authenticated %}
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <div class="me-2">
+                            <div class="fw-bold">{{ current_user.username }}</div>
+                            <div class="small text-muted">{{ current_user.role }}</div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i> تسجيل الخروج
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% else %}
+                <a class="nav-link" href="{{ url_for('login') }}">
+                    <i class="fas fa-sign-in-alt me-1"></i> تسجيل الدخول
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <div class="container-fluid">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'danger' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'times-circle' if category == 'danger' else 'exclamation-triangle' if category == 'warning' else 'info-circle' }} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top py-3 mt-5">
+        <div class="container">
+            <div class="text-center text-muted">
+                <p class="mb-0">نظام الأرشيف &copy; {{ current_year }} - جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Offcanvas Sidebar -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileSidebarLabel">القائمة</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}">
+                        <i class="fas fa-home me-2"></i> الرئيسية
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('car_list') }}">
+                        <i class="fas fa-car me-2"></i> السيارات
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('employee_list') }}">
+                        <i class="fas fa-users me-2"></i> الموظفين
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('document_list') }}">
+                        <i class="fas fa-file-alt me-2"></i> الوثائق
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('equipment_list') }}">
+                        <i class="fas fa-truck me-2"></i> المعدات
+                    </a>
+                </li>
+
+                {% if current_user.is_authenticated and current_user.can_edit() %}
+                <!-- الرواتب -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('salary_settings') }}">
+                        <i class="fas fa-cog me-2"></i> إعدادات الرواتب
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('salary_employees_list') }}">
+                        <i class="fas fa-user-cog me-2"></i> رواتب الموظفين
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('bulk_attendance') }}">
+                        <i class="fas fa-calendar-check me-2"></i> الحضور الجماعي
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('bulk_overtime') }}">
+                        <i class="fas fa-clock me-2"></i> الإضافي الجماعي
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('bulk_advance') }}">
+                        <i class="fas fa-money-bill-wave me-2"></i> السلف الجماعية
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('calculate_payroll') }}">
+                        <i class="fas fa-calculator me-2"></i> حساب الرواتب
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('payroll_list') }}">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> سجل الرواتب
+                    </a>
+                </li>
+
+                <!-- المخازن -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('warehouse_list') }}">
+                        <i class="fas fa-warehouse me-2"></i> إدارة المستودعات
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('material_list') }}">
+                        <i class="fas fa-boxes me-2"></i> إدارة المواد
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('add_stock_transaction') }}">
+                        <i class="fas fa-exchange-alt me-2"></i> حركة المخزون
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('stock_balance') }}">
+                        <i class="fas fa-balance-scale me-2"></i> رصيد المخزون
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if current_user.is_authenticated and current_user.can_edit() %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('notifications') }}">
+                        <i class="fas fa-bell me-2"></i> الإشعارات
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.is_admin() %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('user_list') }}">
+                        <i class="fas fa-user-plus me-2"></i> المستخدمين
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('backup_list') }}">
+                        <i class="fas fa-database me-2"></i> النسخ الاحتياطية
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('audit_log') }}">
+                        <i class="fas fa-history me-2"></i> سجل النشاط
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('company_settings') }}">
+                        <i class="fas fa-cog me-2"></i> إعدادات الشركة
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    {% raw %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const topNavbar = document.querySelector('.top-navbar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const mobileSidebarLinks = mobileSidebar.querySelectorAll('.nav-link');
+            const currentEndpoint = '{{ request.endpoint }}';
+
+            // Function to update active state
+            function updateActiveState(links) {
+                links.forEach(link => {
+                    if (link.classList.contains('active')) {
+                        link.classList.remove('active');
+                    }
+                    if (link.href.includes(currentEndpoint) || (currentEndpoint === 'index' && link.href === '{{ url_for('index') }}')) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            // Function to close mobile sidebar
+            function closeMobileSidebar() {
+                const bsOffcanvas = bootstrap.Offcanvas.getInstance(mobileSidebar);
+                if (bsOffcanvas) {
+                    bsOffcanvas.hide();
+                }
+            }
+
+            // Collapsible Sidebar Functionality
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('collapsed');
+                    topNavbar.classList.toggle('collapsed');
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                });
+
+                // Check for saved state in local storage
+                if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('collapsed');
+                    topNavbar.classList.add('collapsed');
+                }
+            }
+
+            // Mobile Sidebar Functionality
+            mobileSidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileSidebar();
+                });
+            });
+
+            // Initial active state setup
+            const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
+            updateActiveState(sidebarLinks);
+            updateActiveState(mobileSidebarLinks);
+        });
+    </script>
+    {% endraw %}
+</body>
+</html>

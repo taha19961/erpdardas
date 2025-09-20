@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4>إضافة مستخدم جديد</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label>اسم المستخدم <span class="text-danger">*</span></label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>البريد الإلكتروني <span class="text-danger">*</span></label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>كلمة المرور <span class="text-danger">*</span></label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>الصلاحية <span class="text-danger">*</span></label>
+                        <select name="role" class="form-select" required>
+                            <option value="admin">مدير</option>
+                            <option value="archivist">أرشيفي</option>
+                            <option value="user" selected>مستخدم عادي</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">إنشاء المستخدم</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

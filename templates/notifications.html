@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>الإشعارات</h3>
+
+{% if expired_docs %}
+<div class="alert alert-danger">
+    <h5>الوثائق المنتهية:</h5>
+    <ul>
+    {% for doc in expired_docs %}
+        <li><strong>{{ doc.title }}</strong> (انتهت في {{ doc.expiry_date.strftime('%Y-%m-%d') }}) — <a href="{{ url_for('document_detail', document_id=doc.id) }}">عرض</a></li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if expiring_docs %}
+<div class="alert alert-warning">
+    <h5>الوثائق التي ستنتهي خلال 7 أيام:</h5>
+    <ul>
+    {% for doc in expiring_docs %}
+        <li><strong>{{ doc.title }}</strong> (ستنتهي في {{ doc.expiry_date.strftime('%Y-%m-%d') }}) — <a href="{{ url_for('document_detail', document_id=doc.id) }}">عرض</a></li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if not expired_docs and not expiring_docs %}
+<div class="alert alert-success">لا توجد وثائق منتهية أو على وشك الانتهاء.</div>
+{% endif %}
+
+<a href="{{ url_for('document_list') }}" class="btn btn-secondary">العودة لقائمة الوثائق</a>
+{% endblock %}

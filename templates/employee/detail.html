@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">تفاصيل الموظف: {{ employee.full_name }}</h5>
+                <div class="d-flex gap-2">
+                    <button onclick="window.print()" class="btn btn-outline-secondary">
+                        <i class="fas fa-print me-1"></i> طباعة
+                    </button>
+                    <a href="{{ url_for('employee_pdf', employee_id=employee.id) }}" class="btn btn-outline-primary">
+                        <i class="fas fa-file-pdf me-1"></i> تصدير PDF
+                    </a>
+                    {% if current_user.can_edit() %}
+                    <a href="{{ url_for('edit_employee', employee_id=employee.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit me-1"></i> تعديل
+                    </a>
+                    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}" class="d-inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الموظف؟')">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i> حذف
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">الرقم الوطني</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.national_id }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">تاريخ الميلاد</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.birth_date.strftime('%Y-%m-%d') if employee.birth_date else '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">الجنس</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.gender or '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">الهاتف</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.phone or '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">البريد الإلكتروني</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.email or '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">القسم</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.department or '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">الوظيفة</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.position or '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">تاريخ التعيين</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.hire_date.strftime('%Y-%m-%d') if employee.hire_date else '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">الحالة</h6>
+                                        <p class="mb-0">
+                                            <span class="badge bg-{{ 'success' if employee.status == 'active' else 'warning' if employee.status == 'suspended' else 'secondary' }} rounded-pill px-3 py-2">
+                                                {% if employee.status == 'active' %}نشط
+                                                {% elif employee.status == 'suspended' %}موقوف
+                                                {% elif employee.status == 'retired' %}متقاعد
+                                                {% endif %}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">تاريخ الإدخال</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.created_at.strftime('%Y-%m-%d') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if employee.address %}
+                            <div class="col-12">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">العنوان</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.address }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.notes %}
+                            <div class="col-12">
+                                <div class="card bg-light border-0">
+                                    <div class="card-body">
+                                        <h6 class="text-muted small mb-2">ملاحظات</h6>
+                                        <p class="mb-0 fw-bold">{{ employee.notes }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-0">
+                            <div class="card-header">
+                                <h6 class="mb-0">الملفات المرفقة ({{ employee.files|length }})</h6>
+                            </div>
+                            <div class="card-body">
+                                {% if employee.files %}
+                                <div class="list-group">
+                                    {% for file in employee.files %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            {% if file.file_type == 'image' %}
+                                            <img src="{{ url_for('uploaded_file', filename='employees/' + file.filename) }}" 
+                                                 alt="صورة الموظف" 
+                                                 class="img-thumbnail me-2" 
+                                                 style="max-height: 60px; cursor: pointer;"
+                                                 data-bs-toggle="modal" 
+                                                 data-bs-target="#imageModal{{ file.id }}">
+                                            {% else %}
+                                            <i class="fas fa-file-pdf text-danger me-2 fa-lg"></i>
+                                            {% endif %}
+                                            <span class="small">{{ file.filename }}</span>
+                                        </div>
+                                        <a href="{{ url_for('uploaded_file', filename='employees/' + file.filename) }}" 
+                                           class="btn btn-sm btn-outline-secondary" 
+                                           target="_blank">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
+                                    
+                                    {% if file.file_type == 'image' %}
+                                    <div class="modal fade" id="imageModal{{ file.id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">معاينة الصورة</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ url_for('uploaded_file', filename='employees/' + file.filename) }}" class="img-fluid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-folder-open fa-3x text-muted opacity-50 mb-3"></i>
+                                    <p class="text-muted mb-0">لا توجد ملفات مرفقة</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-white">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('employee_list') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> العودة للقائمة
+                    </a>
+                    <a href="{{ url_for('add_employee') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> إضافة موظف جديد
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

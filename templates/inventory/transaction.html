@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">إضافة / صرف مادة من المخزن</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">المستودع <span class="text-danger">*</span></label>
+                                <select name="warehouse_id" class="form-select" required>
+                                    <option value="">اختر مستودع</option>
+                                    {% for wh in warehouses %}
+                                    <option value="{{ wh.id }}">{{ wh.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">المادة <span class="text-danger">*</span></label>
+                                <select name="material_id" class="form-select" required>
+                                    <option value="">اختر مادة</option>
+                                    {% for mat in materials %}
+                                    <option value="{{ mat.id }}">{{ mat.name }} ({{ mat.unit }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">النوع <span class="text-danger">*</span></label>
+                                <select name="transaction_type" class="form-select" required>
+                                    <option value="in">إضافة (دخول)</option>
+                                    <option value="out">صرف (خروج)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">الكمية <span class="text-danger">*</span></label>
+                                <input type="number" name="quantity" class="form-control" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">رقم المرجع (فاتورة، أمر شغل...)</label>
+                                <input type="text" name="reference" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">ملاحظات</label>
+                                <textarea name="notes" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-check"></i> تنفيذ العملية
+                                </button>
+                                <a href="{{ url_for('stock_balance') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times"></i> إلغاء
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

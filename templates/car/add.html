@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">إضافة سيارة جديدة</h5>
+                <a href="{{ url_for('car_list') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> العودة للقائمة
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">رقم الشاسيه <span class="text-danger">*</span></label>
+                                <input type="text" name="chassis_number" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الماركة <span class="text-danger">*</span></label>
+                                <input type="text" name="brand" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الموديل <span class="text-danger">*</span></label>
+                                <input type="text" name="model" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">النوع</label>
+                                <input type="text" name="car_type" class="form-control form-control-lg">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">اللون</label>
+                                <input type="text" name="color" class="form-control form-control-lg">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">السنة</label>
+                                <input type="number" name="year" class="form-control form-control-lg">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">رقم اللوحة</label>
+                                <input type="text" name="plate_number" class="form-control form-control-lg">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الحالة</label>
+                                <select name="status" class="form-select form-select-lg">
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">غير نشط</option>
+                                    <option value="maintenance">تحت الصيانة</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">ملاحظات</label>
+                                <textarea name="notes" class="form-control" rows="4" placeholder="أدخل أي ملاحظات إضافية..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الملفات (صور أو PDF)</label>
+                                <input type="file" name="files" multiple class="form-control">
+                                <div class="form-text text-muted">يمكنك رفع عدة ملفات دفعة واحدة</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> حفظ السيارة
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">حساب الرواتب الأسبوعية</h5>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> العودة للرئيسية
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="mb-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">الأسبوع <span class="text-danger">*</span></label>
+                                <select name="week_number" class="form-select form-select-lg" required>
+                                    <option value="">-- اختر أسبوع --</option>
+                                    {% for week, year in weeks %}
+                                    <option value="{{ week }}">{{ week }} - {{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">السنة <span class="text-danger">*</span></label>
+                                <select name="year" class="form-select form-select-lg" required>
+                                    <option value="">-- اختر سنة --</option>
+                                    {% for week, year in weeks %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">موظف (اختياري)</label>
+                                <select name="employee_id" class="form-select form-select-lg">
+                                    <option value="">-- احسب لجميع الموظفين --</option>
+                                    {% for emp in employees %}
+                                    <option value="{{ emp.id }}">{{ emp.full_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-success btn-lg px-5">
+                            <i class="fas fa-calculator me-2"></i> حساب الرواتب
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    سيتم حساب الرواتب بناءً على سجلات الحضور والغياب والساعات الإضافية والسلف المسجلة لهذا الأسبوع.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

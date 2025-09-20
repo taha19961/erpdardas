@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">إضافة سجل صيانة للسيارة: {{ car.brand }} {{ car.model }}</h5>
+                <a href="{{ url_for('car_detail', car_id=car.id) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> العودة للتفاصيل
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">نوع الصيانة <span class="text-danger">*</span></label>
+                                <select name="maintenance_type" class="form-select form-select-lg" required>
+                                    <option value="">-- اختر نوع الصيانة --</option>
+                                    <option value="هيدروليك">هيدروليك</option>
+                                    <option value="محرك">محرك</option>
+                                    <option value="بواط">بواط</option>
+                                    <option value="حلة">حلة</option>
+                                    <option value="جبالة">جبالة</option>
+                                    <option value="تريلا">تريلا</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">تاريخ الصيانة <span class="text-danger">*</span></label>
+                                <input type="date" name="date" class="form-control form-control-lg" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label fw-bold">التكلفة (اختياري)</label>
+                                <input type="number" name="cost" class="form-control form-control-lg" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">ملاحظات</label>
+                                <textarea name="notes" class="form-control" rows="6" placeholder="أدخل ملاحظات عن الصيانة..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> حفظ سجل الصيانة
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

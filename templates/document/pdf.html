@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل الوثيقة</title>
+    <style>
+        body { font-family: 'Tajawal', 'Arial', sans-serif; padding: 20px; }
+        h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .section { margin: 20px 0; }
+        .label { font-weight: bold; color: #555; }
+        .value { margin-right: 10px; }
+        .files img { max-width: 150px; margin: 5px; border: 1px solid #ddd; }
+        .files { margin-top: 15px; }
+    </style>
+</head>
+<body>
+    {% if settings %}
+    <div style="text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #007bff;">
+        <img src="{{ settings.logo_url }}" alt="شعار الشركة" style="max-height: 80px; margin-bottom: 10px;">
+        <h2 style="margin: 0; color: #333;">{{ settings.company_name }}</h2>
+    </div>
+    {% endif %}
+    
+    <h2>تفاصيل الوثيقة: {{ document.title }}</h2>
+    
+    <div class="section">
+        <p><span class="label">الرقم المرجعي:</span> <span class="value">{{ document.unique_id }}</span></p>
+        <p><span class="label">العنوان:</span> <span class="value">{{ document.title }}</span></p>
+        <p><span class="label">النوع:</span> <span class="value">{{ document.doc_type or '-' }}</span></p>
+        <p><span class="label">الجهة المصدرة:</span> <span class="value">{{ document.source or '-' }}</span></p>
+        <p><span class="label">تاريخ الإصدار:</span> <span class="value">{{ document.issue_date.strftime('%Y-%m-%d') if document.issue_date else '-' }}</span></p>
+        <p><span class="label">تاريخ الاستلام:</span> <span class="value">{{ document.receive_date.strftime('%Y-%m-%d') }}</span></p>
+        <p><span class="label">المجلد:</span> <span class="value">{{ document.folder or 'عام' }}</span></p>
+        <p><span class="label">الحالة:</span> <span class="value">{{ document.status }}</span></p>
+        <p><span class="label">تاريخ الإدخال:</span> <span class="value">{{ document.created_at.strftime('%Y-%m-%d') }}</span></p>
+        {% if document.notes %}
+        <p><span class="label">ملاحظات:</span> <span class="value">{{ document.notes }}</span></p>
+        {% endif %}
+        {% if document.expiry_date %}
+        <p><span class="label">تاريخ الانتهاء:</span> <span class="value">{{ document.expiry_date.strftime('%Y-%m-%d') }}</span></p>
+        {% endif %}
+    </div>
+
+    {% if document.files %}
+    <div class="section">
+        <h3>الملفات المرفقة</h3>
+        <div class="files">
+            {% for file in document.files %}
+                {% if file.file_type == 'image' %}
+                    <img src="{{ url_for('uploaded_file', filename='documents/' + (document.folder + '/' if document.folder != 'عام' else '') + file.filename, _external=True) }}" alt="ملف">
+                {% else %}
+                    <p><i class="bi bi-file-pdf"></i> {{ file.filename }} — <a href="{{ url_for('uploaded_file', filename='documents/' + (document.folder + '/' if document.folder != 'عام' else '') + file.filename, _external=True) }}">تنزيل</a></p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

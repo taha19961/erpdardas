@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>إضافة وثيقة جديدة</h3>
+    <a href="{{ url_for('document_list') }}" class="btn btn-secondary">العودة للقائمة</a>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label>العنوان <span class="text-danger">*</span></label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>النوع</label>
+                <input type="text" name="doc_type" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>الجهة المصدرة</label>
+                <input type="text" name="source" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>تاريخ الإصدار</label>
+                <input type="date" name="issue_date" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>تاريخ الاستلام</label>
+                <input type="date" name="receive_date" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>تاريخ الانتهاء</label>
+                <input type="date" name="expiry_date" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label>المجلد</label>
+                <input type="text" name="folder" class="form-control" value="عام">
+            </div>
+            <div class="mb-3">
+                <label>الحالة</label>
+                <select name="status" class="form-select">
+                    <option value="pending">قيد المراجعة</option>
+                    <option value="archived">محفوظة</option>
+                    <option value="expired">منتهية</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>ملاحظات</label>
+                <textarea name="notes" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label>الملفات (صور أو PDF)</label>
+                <input type="file" name="files" multiple class="form-control">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">حفظ الوثيقة</button>
+</form>
+{% endblock %}

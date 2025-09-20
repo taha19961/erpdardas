@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">تعديل مادة: {{ material.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">اسم المادة <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" value="{{ material.name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">الوحدة <span class="text-danger">*</span></label>
+                                <select name="unit" class="form-select" required>
+                                    <option value="طن" {% if material.unit == 'طن' %}selected{% endif %}>طن</option>
+                                    <option value="متر مكعب" {% if material.unit == 'متر مكعب' %}selected{% endif %}>متر مكعب</option>
+                                    <option value="لتر" {% if material.unit == 'لتر' %}selected{% endif %}>لتر</option>
+                                    <option value="قطعة" {% if material.unit == 'قطعة' %}selected{% endif %}>قطعة</option>
+                                    <option value="كيس" {% if material.unit == 'كيس' %}selected{% endif %}>كيس</option>
+                                    <option value="متر" {% if material.unit == 'متر' %}selected{% endif %}>متر</option>
+                                    <option value="كيلو" {% if material.unit == 'كيلو' %}selected{% endif %}>كيلو</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">الحد الأدنى للتنبيه</label>
+                                <input type="number" name="min_stock_level" class="form-control" step="0.01" value="{{ material.min_stock_level }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">التصنيف</label>
+                                <input type="text" name="category" class="form-control" value="{{ material.category or '' }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">ملاحظات</label>
+                                <textarea name="notes" class="form-control" rows="3">{{ material.notes or '' }}</textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save"></i> تحديث
+                                </button>
+                                <a href="{{ url_for('material_list') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times"></i> إلغاء
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

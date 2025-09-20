@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>النسخ الاحتياطية</h3>
+
+{% if backups %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>اسم الملف</th>
+            <th>الحجم</th>
+            <th>تاريخ الإنشاء</th>
+            <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for backup in backups %}
+        <tr>
+            <td>{{ backup.filename }}</td>
+            <td>{{ backup.size }}</td>
+            <td>{{ backup.created }}</td>
+            <td>
+                <a href="{{ url_for('download_backup', filename=backup.filename) }}" class="btn btn-sm btn-outline-primary">تحميل</a>
+                <a href="{{ url_for('delete_backup', filename=backup.filename) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')">حذف</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">لا توجد نسخ احتياطية بعد.</div>
+{% endif %}
+
+<a href="{{ url_for('trigger_backup') }}" class="btn btn-success">إنشاء نسخة احتياطية الآن</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+Flask-WTF
+Flask-Login
+Flask-Bcrypt
+python-dotenv
+werkzeug
+pandas
+openpyxl
+pdfkit
+APScheduler

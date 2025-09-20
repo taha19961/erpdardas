@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل الموظف</title>
+    <style>
+        body { font-family: 'Tajawal', 'Arial', sans-serif; padding: 20px; }
+        h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .section { margin: 20px 0; }
+        .label { font-weight: bold; color: #555; }
+        .value { margin-right: 10px; }
+        .files img { max-width: 150px; margin: 5px; border: 1px solid #ddd; }
+        .files { margin-top: 15px; }
+    </style>
+</head>
+<body>
+    {% if settings %}
+    <div style="text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #007bff;">
+        <img src="{{ settings.logo_url }}" alt="شعار الشركة" style="max-height: 80px; margin-bottom: 10px;">
+        <h2 style="margin: 0; color: #333;">{{ settings.company_name }}</h2>
+    </div>
+    {% endif %}
+    
+    <h2>تفاصيل الموظف: {{ employee.full_name }}</h2>
+    
+    <div class="section">
+        <p><span class="label">الرقم المرجعي:</span> <span class="value">{{ employee.unique_id }}</span></p>
+        <p><span class="label">الرقم الوطني:</span> <span class="value">{{ employee.national_id }}</span></p>
+        <p><span class="label">تاريخ الميلاد:</span> <span class="value">{{ employee.birth_date.strftime('%Y-%m-%d') if employee.birth_date else '-' }}</span></p>
+        <p><span class="label">الجنس:</span> <span class="value">{{ employee.gender or '-' }}</span></p>
+        <p><span class="label">الهاتف:</span> <span class="value">{{ employee.phone or '-' }}</span></p>
+        <p><span class="label">البريد الإلكتروني:</span> <span class="value">{{ employee.email or '-' }}</span></p>
+        <p><span class="label">القسم:</span> <span class="value">{{ employee.department or '-' }}</span></p>
+        <p><span class="label">الوظيفة:</span> <span class="value">{{ employee.position or '-' }}</span></p>
+        <p><span class="label">تاريخ التعيين:</span> <span class="value">{{ employee.hire_date.strftime('%Y-%m-%d') if employee.hire_date else '-' }}</span></p>
+        <p><span class="label">الحالة:</span> <span class="value">{{ employee.status }}</span></p>
+        <p><span class="label">تاريخ الإدخال:</span> <span class="value">{{ employee.created_at.strftime('%Y-%m-%d') }}</span></p>
+        {% if employee.notes %}
+        <p><span class="label">ملاحظات:</span> <span class="value">{{ employee.notes }}</span></p>
+        {% endif %}
+    </div>
+
+    {% if employee.files %}
+    <div class="section">
+        <h3>الملفات المرفقة</h3>
+        <div class="files">
+            {% for file in employee.files %}
+                {% if file.file_type == 'image' %}
+                    <img src="{{ url_for('uploaded_file', filename='employees/' + file.filename, _external=True) }}" alt="صورة">
+                {% else %}
+                    <p><i class="bi bi-file-pdf"></i> {{ file.filename }} — <a href="{{ url_for('uploaded_file', filename='employees/' + file.filename, _external=True) }}">تنزيل</a></p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
